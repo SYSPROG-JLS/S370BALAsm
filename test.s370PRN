@@ -1,0 +1,52 @@
+000000 05C0                                                      BALR  R12,0 
+000000                                                           USING *,R12
+000002 4130C059                                                  LA    R3,AREA1+1
+000006 41400004                                                  LA    R4,4
+00000A 92F03000                                         LOOP     MVI   0(R3),C'0'
+00000E 41303001                                                  LA    R3,1(,R3)
+000012 4640C008                                                  BCT   R4,LOOP
+000016 41F00000                                                  LA    R15,0
+00001A 5860C085                                                  L     R6,LT001
+00001E D202C065C089                                              MVC   AREA4,LT002
+000024 F050C0520003                                              SRP   FIELD1(6),3,0                        this is a comment
+00002A D201C05DC058                                              MVC   AREA2+1(2),AREA1
+000030 FA41C053C050                                              AP    FIELD1+1(5),PACK+1(2)
+000030                                                  * this is a comment
+000036 07FE                                                      BCR    15,R14
+000038 0000000000000000                                          DS    2F
+000040 0AFFEEDD00000020000003                           BIN      DC    B'1010',XL3'FFEEDD',F'32',AL3(3)
+00004B 0000000F                                         FULL     DC    F'15'
+00004F FFFD                                             HALF     DC    H'-3'
+000051 98765C                                           PACK     DC    PL3'98765'
+000054 00012345678C                                     FIELD1   DC    XL6'00012345678C'
+00005A 00FFFFFF                                         AREA1    DC    XL4'FFFFFF'
+00005E F0F1F2F3F4404040                                 AREA2    DC    CL8'01234'
+000066 F1                                               AREA3    DC    C'1'
+000067 F1F2F3                                           AREA4    DC    C'123'
+00006A 0001                                             AREA5    DC    X'0001'
+00006C 40                                               AREA6    DS    C
+00006D 0000000000                                       AREA7    DS    XL5
+000072 404040                                           AREA8    DS    CL3
+000075 00                                               AREA9    DS    X
+000076 0040                                             AREAX    DC    Y(BIN)
+000081 002D                                             AREAZ    DC    Y(45)
+000083 0000004B                                         AREAY    DC    A(FULL)
+000083                                                  R0       EQU   0
+000083                                                  R1       EQU   1
+000083                                                  R2       EQU   2
+000083                                                  R3       EQU   3
+000083                                                  R4       EQU   4
+000083                                                  R5       EQU   5
+000083                                                  R6       EQU   6
+000083                                                  R7       EQU   7
+000083                                                  R8       EQU   8
+000083                                                  R9       EQU   9
+000083                                                  R10      EQU   10
+000083                                                  R11      EQU   11
+000083                                                  R12      EQU   12
+000083                                                  R13      EQU   13
+000083                                                  R14      EQU   14
+000083                                                  R15      EQU   15
+000087 0000007B                                         LT001    DC    F'123'
+00008B C1C1                                             LT002    DC    CL2'AA'
+00008B                                                           END
