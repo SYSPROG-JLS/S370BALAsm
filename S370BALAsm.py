@@ -1,4 +1,6 @@
 # 
+# S370BALAsm V2.R1.M1
+#
 # This file is part of the S370BALAsm distribution.
 # Copyright (c) 2021 James Salvino.
 # 
@@ -392,7 +394,7 @@ def handle_DC(spec):
         
     elif spec[0] == 'A':
         if const[0].isalpha():
-            (addr, num_bytes) = symbol_table_dict[const]
+            (addr, num_bytes_dict) = symbol_table_dict[const]
             const = addr
         if num_bytes > 0:
             byte_array = cvtint2hex(int(const), numbytes=num_bytes)
@@ -401,7 +403,7 @@ def handle_DC(spec):
                 
     elif spec[0] == 'Y':
         if const[0].isalpha():
-            (addr, num_bytes) = symbol_table_dict[const]
+            (addr, num_bytes_dict) = symbol_table_dict[const]
             const = addr
         byte_array = cvtint2hex(int(const), numbytes=2) 
         
@@ -415,6 +417,11 @@ def handle_DC(spec):
 
 
 def handle_DS(spec):
+    gotZero = False
+    if spec[0] == '0':                              #handle 0D, 0CL80
+        gotZero = True
+        spec = spec[1:]
+
     num_repeats = 1
     if len(spec) > 1:
         if spec[0].isnumeric():                     #handle 18F
@@ -471,7 +478,10 @@ def handle_DS(spec):
         
     elif spec[0] == 'V':
         pass
-    
+
+    if gotZero:
+        return (num_bytes, [])
+
     return (num_bytes, byte_array)
 
 
@@ -894,12 +904,16 @@ while True:
             
         elif mnemonic == 'DS':
             (DS_num_bytes, const_array) = handle_DS(sl[15:50].rstrip(' '))
-            address_opcode_list.append((program_ctr, ''.join(const_array)))
+            # an empty const_array list indicates we had a 'DS  0F, 0D, 0CL4', etc
+            if const_array:     
+                address_opcode_list.append((program_ctr, ''.join(const_array)))
             #add label on same line as DS to symbol table dict
             if sl[0] != ' ':
-                symbol_table_dict[sl[0:8].rstrip(' ')] = (program_ctr, DS_num_bytes) 
-            program_ctr = program_ctr + DS_num_bytes            
-            
+                symbol_table_dict[sl[0:8].rstrip(' ')] = (program_ctr, DS_num_bytes)
+            # an empty const_array list indicates we had a 'DS  0F, 0D, 0CL4', etc
+            if const_array:      
+                program_ctr = program_ctr + DS_num_bytes
+
         elif mnemonic == 'END':
             break
     else:
@@ -1036,17 +1050,29 @@ while True:
     sl = source_code_list[sl_ctr]
 
     mnemonic = sl[9:14].rstrip(' ')
+    operand = sl[15:50].rstrip(' ')
 
     if sl[0] != '*' and (mnemonic in mach_inst_dict.keys() or (mnemonic == 'DC' or mnemonic == 'DS')):
-        (addr, code) = address_opcode_list[aol_ctr]
-        display_addr = hex(addr).lstrip('0x').rjust(6,'0').upper()
-        assem_output = display_addr + ' ' + code
-        if debug:
-            print(assem_output, (54-len(assem_output))*' ', sl)
-        outputfi.write(assem_output + ' ' + (54-len(assem_output))*' ' + ' ' + sl + '\n')    
-        aol_ctr = aol_ctr + 1
-        instrdata.extend([code[i:i+2] for i in range(0,len(code),2) ])
-        work_source_code_list.append(assem_output + ' ' + (54-len(assem_output))*' ' + ' ' + sl)
+        if mnemonic == 'DS' and operand[0] == '0':
+            (addr, code) = address_opcode_list[aol_ctr]
+            listing_line = hex(addr).lstrip('0x').rjust(6,'0').upper() + ' ' + 48*' ' + ' ' + sl
+            if debug:
+                print(listing_line)
+            outputfi.write(listing_line + '\n')
+        else:
+            (addr, code) = address_opcode_list[aol_ctr]
+            if len(code) > 46:
+                display_code = code[0:46]
+            else:
+                display_code = code
+            display_addr = hex(addr).lstrip('0x').rjust(6,'0').upper()
+            assem_output = display_addr + ' ' + display_code
+            if debug:
+                print(assem_output, (54-len(assem_output))*' ', sl)
+            outputfi.write(assem_output + ' ' + (54-len(assem_output))*' ' + ' ' + sl + '\n')    
+            aol_ctr = aol_ctr + 1
+            instrdata.extend([code[i:i+2] for i in range(0,len(code),2) ])
+            work_source_code_list.append(assem_output + ' ' + (54-len(assem_output))*' ' + ' ' + sl)
     else:
         if debug:
             print(display_addr, (54-len(display_addr))*' ', sl)

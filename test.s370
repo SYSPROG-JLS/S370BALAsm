@@ -2,12 +2,13 @@
          USING *,R12
          LA    R3,AREA1+1
          LA    R4,4
-LOOP     MVI   0(R3),C'0'
+LOOP     DS    0H
+         MVI   0(R3),C'0'
          LA    R3,1(,R3)
          BCT   R4,LOOP
          LA    R15,0
          L     R6,=F'123'
-         MVC   AREA4,=CL2'AA'
+         MVC   AREA4,=CL3'ABC'
          SRP   FIELD1(6),3,0                        this is a comment
          MVC   AREA2+1(2),AREA1
          AP    FIELD1+1(5),PACK+1(2)
@@ -19,6 +20,7 @@ FULL     DC    F'15'
 HALF     DC    H'-3'
 PACK     DC    PL3'98765'
 FIELD1   DC    XL6'00012345678C'
+AREA     DS    0CL12
 AREA1    DC    XL4'FFFFFF'
 AREA2    DC    CL8'01234'
 AREA3    DC    C'1'
@@ -31,6 +33,13 @@ AREA9    DS    X
 AREAX    DC    Y(BIN)
 AREAZ    DC    Y(45)
 AREAY    DC    A(FULL)
+PAYREC   DS    0CL80                                HANDLE FOR THE STRUCTURE
+EMPID    DS    CL4                                  EMPLOYEE ID
+         DS    CL6                                  FILLER TO POSITION 10
+EMPLOYEE DS    CL21                                 NAME OF EMPLOYEE
+         DS    CL2                                  FILLER TO POSITION 34
+SALARY   DS    CL4                                  MONTHLY SALARY
+TOEND    DS    CL43                                 80 BYTES SO FAR
 R0       EQU   0
 R1       EQU   1
 R2       EQU   2
