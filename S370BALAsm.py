@@ -240,10 +240,10 @@ ASC2EBC = ['00', '00', '00', '00', '00', '00', '00', '00', '00', '00', '00', '00
 # Mnemonics and Assembler Directives MUST start in col 10.
 # Operands MUST start in col 16.
 # An asterisk in col 1 denotes a comment line.
-# Optional comments on a source line MUST begin in col 50
+# Optional comments on a source line MUST begin in col 51
 # or beyond.
 #
-# 1     10       16       50
+# 1     10       16       51
 # Label Mnemonic Operands Comments
 # [0:8] [9:14]   [15:50]  [50:]
 #
