@@ -32,12 +32,15 @@
 # a real one or one run virtually under Hercules).
 # 
 # S370BALAsm is written in Python V3.
+# You must have Python V3 installed on your PC or Mac.
+#
 # In an effort to make this as fun for me
-# as possible (which of course is my aim)
-# there is precious little, if any, extensive 
+# as possible (which of course is my aim),
+# there is some, but not extensive 
 # error checking. If you have bad assembler code
 # S370BALAsm will abend, and hopefully you will 
-# be able to fix your problem.
+# be able to fix your problem. Always look at your code
+# first before blaming the assembler.
 #
 # Also, for you Python purists out there, this
 # code is not necessarily PEP 8 complient nor
@@ -70,10 +73,12 @@
 #
 # Labels and Field Names MUST start in col 1.
 # Mnemonics and Assembler Directives MUST start in col 10.
-# Operands MUST start in col 16.
-# An asterisk in col 1 denotes a comment line.
-# Optional comments on a source line MUST begin in col 51
+# Operands MUST start in col 16 and end by col 49.
+# Operands of any kind extending beyond col 49 will cause an error
+# or erratic behavior.
+# Optional comments on a source line MUST begin no earlier than col 51
 # or beyond.
+# An asterisk in col 1 denotes a comment line.
 #
 # 1     10       16       51
 # Label Mnemonic Operands Comments
@@ -84,6 +89,19 @@
 #
 # The following assembler directives are supported:
 # 'USING', 'DC', 'DS', 'EQU' and 'END'.
+#
+# Use of the implict length operator is supported on RX type instructions.
+# For example:     LA    1,L'DATAAREA
+#
+# The following assembler directives are tolerated (meaning they are permitted in the source file but are ignored and are made into a comment):
+# 'CSECT', 'PRINT', 'DROP', and 'LTORG'.
+#
+# Please note that even though LTORG is not supported, literals (for example, =F'0') are supported. When encountered the assembler
+# will create a new data constant on the fly and add it before the END statement.
+#
+# The following MVS IO macros are supported:
+# 'OPEN', 'GET', 'PUT', 'CLOSE', 'DCB' and 'WTO'.
+# Please see README_IO.txt for more information on how to use these macros.
 #
 # All assemblies MUST start at location 0
 #
@@ -114,6 +132,10 @@
 # in teaching the basics of IBM S/370 Assembler coding.
 # Not every possible function is implemented - not even 
 # the ones considered by most to be critical or important.
+#
+# If you need a full function assembler, please consider
+# using IFOX00 under MVS3.8J or Z390 Portable Mainframe Assembler 
+# and Emulator (Copyright 2011-13 Automated Software Tools Corporation).
 #
 # Have fun with this and I hope you find it useful!
 #
