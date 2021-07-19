@@ -1,0 +1,142 @@
+000000                                                  *         PRINT ON,NOGEN
+000000                                                  *REPORT   CSECT
+000000 05C0                                                      BALR  R12,0                              SET UP MY                       
+000000                                                           USING *,R12                              BASE REGISTER         
+000000                                                  *        ST    R13,SAVEA+4                        ENSURE SAVE AREA                
+000000                                                  *        LA    R13,SAVEA                          CHAIN BUILT CORRECTLY. 
+000000                                                  *---------------------------------------------------------------------*
+000000                                                  *INOPEN   OPEN  (INDCB,INPUT)
+000002 4100C0B4                                         INOPEN   LA    0,INDCBN
+000006 5810C0B0                                                  L     1,INDCBS
+00000A 0AF9                                                      SVC   249
+00000A                                                  *
+00000A                                                  *OUOPEN   OPEN  (OUTDCB,OUTPUT)
+00000C 4100C0BC                                         OUOPEN   LA    0,OUTDCBN
+000010 5810C0B8                                                  L     1,OUTDCBS
+000014 0AF9                                                      SVC   249
+000014                                                  *
+000014                                                  * WRITE OUTPUT RECORD
+000014                                                  *WTITLE   PUT   OUTDCB,PTITLE
+000016 4100C111                                         WTITLE   LA    0,PTITLE
+00001A 41100079                                                  LA    1,L'PTITLE
+00001E BF1EC0B8                                                  ICM   1,14,OUTDCBS
+000022 0AF6                                                      SVC   246
+000022                                                  *         WTO   PTITLE
+000024 4100C111                                                  LA    0,PTITLE
+000028 41100079                                                  LA    1,L'PTITLE
+00002C 0AFF                                                      SVC   255
+00002C                                                  *---------------------------------------------------------------------*
+00002C                                                  *READREC  GET   INDCB,PAYREC                       READ IN EMPLOYEE REC
+00002E 4100C0C1                                         READREC  LA    0,PAYREC
+000032 5810C0B0                                                  L     1,INDCBS
+000036 0AF7                                                      SVC   247
+000038 1B00                                                      SR    0,0
+00003A 5810C0AC                                                  L     1,INDCBE
+00003E 19F0                                                      CR    15,0
+000040 0781                                                      BCR    8,1 
+000040                                                  *---------------------------------------------------------------------*
+000040                                                  * PRINT ALSO ON SCREEN 
+000040                                                  *         WTO   PAYREC
+000042 4100C0C1                                                  LA    0,PAYREC
+000046 41100050                                                  LA    1,L'PAYREC
+00004A 0AFF                                                      SVC   255
+00004A                                                  * 
+00004C D203C18BC0C1                                     CPYSTUFF MVC   PEMPID,EMPID                                            
+000052 D213C195C0CB                                              MVC   PEMPLOYE,EMPLOYEE                                       
+000058 D204C1ACC0E2                                              MVC   PSALARY,SALARY                                          
+000058                                                  *                                                                      
+00005E F223C20FC0E2                                     PACKIT   PACK  ZSALARY,SALARY                     PACK SALARY                     
+000064 FA42C212C20F                                              AP    ZTOTSAL,ZSALARY                    ADD MONTHLY WAGE TO
+000064                                                  *WRITEPR  PUT   OUTDCB,OUTAREA                     WRITE TO PRINTER
+00006A 4100C18A                                         WRITEPR  LA    0,OUTAREA
+00006E 41100085                                                  LA    1,L'OUTAREA
+000072 BF1EC0B8                                                  ICM   1,14,OUTDCBS
+000076 0AF6                                                      SVC   246
+000078 47F0C02C                                                  BC     15,READREC                            AND REPEAT TILL FILE
+000078                                                  *---------------------------------------------------------------------*
+00007C D20AC23CC217                                     INCLOS   MVC   ATOTAL,EDWD                                              
+00007C                                                  *        LA    R1,ATOTAL                                                
+000082 DE0AC23CC212                                              ED    ATOTAL,ZTOTSAL                                           
+000082                                                  *         PUT   OUTDCB,TOTALLNE                    PRINT TOTAL LINE
+000088 4100C222                                                  LA    0,TOTALLNE
+00008C 41100085                                                  LA    1,L'TOTALLNE
+000090 BF1EC0B8                                                  ICM   1,14,OUTDCBS
+000094 0AF6                                                      SVC   246
+000094                                                  * PRINT TOTAL ALSO ON SCREEN
+000094                                                  *         WTO   TOTALLNE
+000096 4100C222                                                  LA    0,TOTALLNE
+00009A 41100085                                                  LA    1,L'TOTALLNE
+00009E 0AFF                                                      SVC   255
+00009E                                                  *
+00009E                                                  *CLSALL   CLOSE (INDCB)                            WE GET HERE FROM EODAD
+0000A0 5810C0B0                                         CLSALL   L     1,INDCBS
+0000A4 0AF8                                                      SVC   248
+0000A4                                                  *         CLOSE (OUTDCB)
+0000A6 5810C0B8                                                  L     1,OUTDCBS
+0000AA 0AF8                                                      SVC   248
+0000AA                                                  *
+0000AC 07FE                                                      BCR    15,R14
+0000AC                                                  *         LTORG                                                         
+0000AC                                                  *---------------------------------------------------------------------*
+0000AC                                                  *INDCB    DCB   MACRF=GM,DDNAME=INDD,DSORG=PS,EODAD=INCLOS                
+0000AE                                                  INDCB    DS    0H
+0000AE 0000007C                                         INDCBE   DC    A(INCLOS)
+0000B2 01000004                                         INDCBS   DC    XL4'01000004'
+0000B6 C9D5C4C4                                         INDCBN   DC    CL4'INDD'
+0000B6                                                  *OUTDCB   DCB   MACRF=PM,DDNAME=OUTDD,DSORG=PS                            
+0000BA                                                  OUTDCB   DS    0H
+0000BA 02010005                                         OUTDCBS  DC    XL4'02010005'
+0000BE D6E4E3C4C4                                       OUTDCBN  DC    CL5'OUTDD'
+0000BE                                                  *                          PAYROLL REPORT STRUCTURE                    
+0000C3                                                  PAYREC   DS    0CL80                              HANDLE FOR THE STRU
+0000C3 40404040                                         EMPID    DS    CL4                                EMPLOYEE ID                                 
+0000C7 404040404040                                              DS    CL6                                FILLER TO POSITION10                       
+0000CD 404040404040404040404040404040404040404040       EMPLOYEE DS    CL21                               NAME OF EMPLOYEE                            
+0000E2 4040                                                      DS    CL2                                FILLER TO POSITION34                       
+0000E4 40404040                                         SALARY   DS    CL4                                MONTHLY SALARY                              
+0000E8 4040404040404040404040404040404040404040404040   TOEND    DS    CL43                               80 BYTES SO FAR                             
+0000E8                                                  *--------S-T-A-R-T----O-F----O-U-T-P-U-T----S-T-R-U-C-T-U-R-E---------*
+000113                                                  PTITLE   DS    0CL121 
+000113 40D740C140E840D940D640D340D34040D940C540D740D6            DC    CL27' P A Y R O L L  R E P O R T'
+00012E 4040604040C240C940D44040C340D640D940D74B                  DC    CL20'  -  B I M  C O R P.'
+000142 4040404040404040404040404040404040404040404040            DC    CL74' '
+00018C                                                  OUTAREA  DS    0CL133
+00018C 40                                               EMPTY    DC    CL1' '                                                  
+00018D 40404040                                         PEMPID   DC    CL4' '                                                  
+000191 404040404040                                              DC    CL6' '                                                  
+000197 4040404040404040404040404040404040404040         PEMPLOYE DC    CL20' '                                                 
+0001AB 4040                                                      DC    CL2' '                                                  
+0001AD 40                                               PDOLLAR  DC    CL1' '                                                  
+0001AE 4040404040                                       PSALARY  DC    CL5' '                                                  
+0001B3 4040404040404040404040404040404040404040404040   OFILLER  DC    CL94' '                                                 
+0001B3                                                  *                                                                      
+000211 00000C                                           ZSALARY  DC    PL3'0'                             INITIALIZE SLARY PAC
+000214 000000000C                                       ZTOTSAL  DC    PL05'0'                            INITIALIZE TOTAL WA
+000219 402020202020206B202020                           EDWD     DC    X'402020202020206B202020'
+000224                                                  TOTALLNE DS    0CL133                                                  
+000224 F0                                               SKIP     DC    CL1'0'                                                  
+000225 404040404040404040                               TFILL1   DC    CL09' '                                                 
+00022E 404040404040404040404040404040                   TFILL2   DC    CL15' '                                                 
+00023D 5B                                               TDOLLAR  DC    CL1'$'                                                  
+00023E 4040404040404040404040                           ATOTAL   DC    CL11' '                                                 
+000249 4040404040                                       TFILL3   DC    CL5' '                                                 
+00024E E3D6E3C1D340D4D6D5E3C8D3E840E6C1C7C5E240404040   TOTMSG   DC    CL61'TOTAL MONTHLY WAGES'                               
+00028B 4040404040404040404040404040404040404040404040   TFILL4   DC    CL30' '  
+00028B                                                  *
+00028B                                                  R0       EQU   0                                                       
+00028B                                                  R1       EQU   1                                                       
+00028B                                                  R2       EQU   2                                                       
+00028B                                                  R3       EQU   3                                                       
+00028B                                                  R4       EQU   4                                                       
+00028B                                                  R5       EQU   5                                                       
+00028B                                                  R6       EQU   6                                                       
+00028B                                                  R7       EQU   7                                                       
+00028B                                                  R8       EQU   8                                                       
+00028B                                                  R9       EQU   9                                                       
+00028B                                                  R10      EQU   10                                                      
+00028B                                                  R11      EQU   11                                                      
+00028B                                                  R12      EQU   12                                                      
+00028B                                                  R13      EQU   13                                                      
+00028B                                                  R14      EQU   14                                                      
+00028B                                                  R15      EQU   15                                                      
+00028B                                                           END                                                           
