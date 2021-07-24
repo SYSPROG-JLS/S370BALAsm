@@ -51,7 +51,14 @@
 # Syntax and Usage Notes:
 #
 # The source code input file MUST be a plain
-# ASCII text file. It MUST exist in your current
+# ASCII text file. IMPORTANT NOTE: TAB
+# characters are NOT supported and MUST NOT
+# appear in your text file. Insure that your
+# editor replaces the tab character with the
+# appropriate number of spaces or do not
+# use the TAB key.
+#
+# The source code input file MUST exist in your current
 # working directory and have the file type of
 # s370 (for example: test.s370)
 #
@@ -89,6 +96,10 @@
 #
 # The following assembler directives are supported:
 # 'USING', 'DC', 'DS', 'EQU' and 'END'.
+#
+# Note: the EQU directive ONLY supports an operand
+# of '*' or a single value. No arithmetic is allowed
+# as an operand of an EQU.
 #
 # Use of the implict length operator is supported on RX type instructions.
 # For example:     LA    1,L'DATAAREA
@@ -137,10 +148,14 @@
 # using IFOX00 under MVS3.8J or Z390 Portable Mainframe Assembler 
 # and Emulator (Copyright 2011-13 Automated Software Tools Corporation).
 #
+# If you encounter a bug, feel free to open a GitHub issue
+# and I will attempt to look at it. I may ask for the source code
+# file that you are trying to assemble.
+#
 # Have fun with this and I hope you find it useful!
 #
-#
-# sample program to assemble: 
+# 
+# Here is a sample program to assemble: 
 #
 # 000000 ['05', 'C0',                       BALR  R12,0 
 # 000002                                    USING *,R12
