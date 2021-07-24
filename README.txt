@@ -104,11 +104,13 @@
 # Use of the implict length operator is supported on RX type instructions.
 # For example:     LA    1,L'DATAAREA
 #
-# The following assembler directives are tolerated (meaning they are permitted in the source file but are ignored and are made into a comment):
+# The following assembler directives are tolerated (meaning they are 
+# permitted in the source file but are ignored and are made into a comment):
 # 'CSECT', 'PRINT', 'DROP', and 'LTORG'.
 #
-# Please note that even though LTORG is not supported, literals (for example, =F'0') are supported. When encountered the assembler
-# will create a new data constant on the fly and add it before the END statement.
+# Please note that even though LTORG is not supported, literals (for example, =F'0') 
+# are supported. When encountered, the assembler will create a new data constant 
+# on the fly and add it before the END statement.
 #
 # The following MVS IO macros are supported:
 # 'OPEN', 'GET', 'PUT', 'CLOSE', 'DCB' and 'WTO'.
