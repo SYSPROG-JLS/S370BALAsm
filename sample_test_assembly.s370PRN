@@ -1,0 +1,71 @@
+000000 05C0                                                      BALR  R12,0 
+000000                                                           USING *,R12
+000002 4130C080                                                  LA    R3,AREA1+1
+000006 41400004                                                  LA    R4,4
+00000A                                                  LOOP     DS    0H
+00000A 92F03000                                                  MVI   0(R3),C'0'
+00000E 41303001                                                  LA    R3,1(,R3)
+000012 4640C008                                                  BCT   R4,LOOP
+000016 41F00000                                                  LA    R15,0
+00001A 5860C0A3                                                  L     R6,=F'123'
+00001A                                                  * display the contents of R6 to terminal using SVC 253
+00001E 1806                                                      LR    R0,R6
+000020 0AFD                                                      SVC   253    
+000022 D202C08CC0A7                                              MVC   AREA4,=CL3'ABC'
+000028 F050C06E0003                                              SRP   FIELD1(6),3,0                        this is a comment - MUST START in col 51 or greater
+00002E D201C084C07F                                              MVC   AREA2+1(2),AREA1
+000034 4170C06C                                                  LA    R7,PACK+1
+000038 FA41C06F7000                                              AP    FIELD1+1(5),0(2,R7)
+00003E F3A5C074C06E                                              UNPK  DISP,FIELD1
+000044 96F0C07E                                                  OI    DISP+10,X'F0'
+000048                                                           WTO   DISP                                 display result on terminal using WTO "macro"
+000048 4100C074                                        +         LA    0,DISP
+00004C 4110000B                                        +         LA    1,L'DISP
+000050 0AFF                                            +         SVC   255
+000050                                                  * this is a comment - MUST START with * in col 1
+000052                                                  RETURN   EQU   *
+000052 07FE                                                      BR    R14
+000054 0000000000000000                                          DS    2F
+00005C 0AFFEEDD00000020000003                           BIN      DC    B'1010',XL3'FFEEDD',F'32',AL3(3)
+000067 0000000F                                         FULL     DC    F'15'
+00006B 0003                                             HALF     DC    H'3'
+00006D 98765C                                           PACK     DC    PL3'98765'
+000070 00012345678C                                     FIELD1   DC    XL6'00012345678C'
+000076 4040404040404040404040                           DISP     DS    CL11
+000076                                                  *
+000081                                                  AREA     DS    0CL12
+000081 00FFFFFF                                         AREA1    DC    XL4'FFFFFF'
+000085 F0F1F2F3F4404040                                 AREA2    DC    CL8'01234'
+000085                                                  *
+000085                                                  * sample DSs and DCs
+00008D F1                                               AREA3    DC    C'1'
+00008E F1F2F3                                           AREA4    DC    C'123'
+000091 0001                                             AREA5    DC    X'0001'
+000093 40                                               AREA6    DS    C
+000094 0000000000                                       AREA7    DS    XL5
+000099 404040                                           AREA8    DS    CL3
+00009C 00                                               AREA9    DS    X
+00009D 005C                                             AREAX    DC    Y(BIN)
+00009F 002D                                             AREAZ    DC    Y(45)
+0000A1 00000067                                         AREAY    DC    A(FULL)
+0000A1                                                  *
+0000A1                                                  R0       EQU   0
+0000A1                                                  R1       EQU   1
+0000A1                                                  R2       EQU   2
+0000A1                                                  R3       EQU   3
+0000A1                                                  R4       EQU   4
+0000A1                                                  R5       EQU   5
+0000A1                                                  R6       EQU   6
+0000A1                                                  R7       EQU   7
+0000A1                                                  R8       EQU   8
+0000A1                                                  R9       EQU   9
+0000A1                                                  R10      EQU   10
+0000A1                                                  R11      EQU   11
+0000A1                                                  R12      EQU   12
+0000A1                                                  R13      EQU   13
+0000A1                                                  R14      EQU   14
+0000A1                                                  R15      EQU   15
+0000A1                                                           LTORG
+0000A5 0000007B                                        +LT001    DC    F'123'
+0000A9 C1C2C3                                          +LT002    DC    CL3'ABC'
+0000A9                                                           END
