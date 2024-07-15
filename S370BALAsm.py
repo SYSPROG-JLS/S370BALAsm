@@ -1,8 +1,8 @@
 # 
-# S370BALAsm V2.R2.M3
+# S370BALAsm V2.R2.M4
 #
 # This file is part of the S370BALAsm distribution.
-# Copyright (c) 2021 James Salvino.
+# Copyright (c) 2024 James Salvino.
 # 
 # This program is free software: you can redistribute it and/or modify  
 # it under the terms of the GNU General Public License as published by  
@@ -193,7 +193,7 @@ ASC2EBC = ['00', '01', '02', '03', '1A', '09', '1A', '7F', '1A', '1A', '1A', '0B
            '3F', '3F', '3F', '3F', '3F', '3F', '3F', '3F', '3F', '3F', '3F', '3F', '3F', '3F', '3F', '3F']    # F0 - FF
 
 #
-# S370BALAsm.py (c) 2021 - James Salvino.
+# S370BALAsm.py (c) 2024 - James Salvino.
 #
 # This assembler is meant to assemble IBM S/370 problem
 # state instructions to create the data structures needed
@@ -405,7 +405,7 @@ def handle_DC(spec):
     elif spec[0] == 'A':
         if const[0].isalpha():
             if isinstance(symbol_table_dict[const],tuple):
-                (addr, num_bytes) = symbol_table_dict[const]
+                (addr, _) = symbol_table_dict[const]
             else:
                 addr = symbol_table_dict[const]
             const = addr
@@ -436,6 +436,7 @@ def handle_DS(spec):
         spec = spec[1:]
 
     num_repeats = 1
+    type = ''
     if len(spec) > 1:
         if spec[0].isnumeric():                     #handle 18F
             if spec[1].isnumeric():
@@ -445,7 +446,7 @@ def handle_DS(spec):
                 num_repeats = int(spec[0:1])
                 spec = spec[1:]        
         else:
-            (type, num_bytes) = spec.split('L')     #handle XLn  or  CLn
+            (type, num_bytes) = spec.split('L')     #handle XLn  or  CLn  or  ALn
             num_bytes = int(num_bytes)
     else:
         num_bytes = 1
@@ -482,7 +483,8 @@ def handle_DS(spec):
         pass
         
     elif spec[0] == 'A':
-        num_bytes =  4
+        if type == '':
+            num_bytes =  4
         byte_array = [ '00' for i in range(0,num_bytes) ]
         
     elif spec[0] == 'Y':
