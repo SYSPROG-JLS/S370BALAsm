@@ -197,7 +197,7 @@ ASC2EBC = ['00', '01', '02', '03', '1A', '09', '1A', '7F', '1A', '1A', '1A', '0B
 #
 # This assembler is meant to assemble IBM S/370 problem
 # state instructions to create the data structures needed
-# for the S370BALEmu S/370 Emulator (c) 2021 - James
+# for the S370BALEmu S/370 Emulator (c) 2024 - James
 # Salvino.
 #
 # This is a basic implementation of the IBM S/370 
