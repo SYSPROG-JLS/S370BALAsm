@@ -1,6 +1,6 @@
 # 
 # This file is part of the S370BALAsm distribution.
-# Copyright (c) 2021 James Salvino.
+# Copyright (c) 2024 James Salvino.
 # 
 # This program is free software: you can redistribute it and/or modify  
 # it under the terms of the GNU General Public License as published by  
@@ -15,11 +15,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-# S370BALAsm.py (c) 2021 - James Salvino.
+# S370BALAsm.py (c) 2024 - James Salvino.
 #
 # This assembler is meant to assemble IBM S/370 problem
 # state instructions to create the data structures needed
-# for the S370BALEmu S/370 Emulator (c) 2021 - James
+# for the S370BALEmu S/370 Emulator (c) 2024 - James
 # Salvino.
 #
 # This is a basic implementation of the IBM S/370 
