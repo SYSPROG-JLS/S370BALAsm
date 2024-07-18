@@ -80,16 +80,14 @@
 #
 # Labels and Field Names MUST start in col 1.
 # Mnemonics and Assembler Directives MUST start in col 10.
-# Operands MUST start in col 16 and end by col 49.
-# Operands of any kind extending beyond col 49 will cause an error
-# or erratic behavior.
-# Optional comments on a source line MUST begin no earlier than col 51
-# or beyond.
-# An asterisk in col 1 denotes a comment line.
+# Operands MUST start in col 16.
+# Optional comments on a source line MUST begin with /*
+# (slash-asterisk) after your last (or only) Operand.
+# In addition, an asterisk in col 1 denotes a comment line.
 #
-# 1     10       16       51
-# Label Mnemonic Operands Comments
-# [0:8] [9:14]   [15:50]  [50:]
+# 1     10       16
+# Label Mnemonic Operands & Optional Comments
+# [0:8] [9:14]   [15:]
 #
 # Constant types currently supported:
 # C, X, B, F, H, D, P, A, Y
