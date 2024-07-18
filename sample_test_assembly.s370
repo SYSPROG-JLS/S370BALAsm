@@ -12,13 +12,13 @@ LOOP     DS    0H
          LR    R0,R6
          SVC   253    
          MVC   AREA4,=CL3'ABC'
-         SRP   FIELD1(6),3,0                        this is a comment - MUST START in col 51 or greater
+         SRP   FIELD1(6),3,0                 /* this is a comment - MUST START with slash-asterisk
          MVC   AREA2+1(2),AREA1
          LA    R7,PACK+1
          AP    FIELD1+1(5),0(2,R7)
          UNPK  DISP,FIELD1
          OI    DISP+10,X'F0'
-         WTO   DISP                                 display result on terminal using WTO "macro"
+         WTO   DISP                          /* display result on terminal using WTO "macro"
 * this is a comment - MUST START with * in col 1
 RETURN   EQU   *
          BR    R14

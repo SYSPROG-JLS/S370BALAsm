@@ -12,13 +12,13 @@
 00001E 1806                                                      LR    R0,R6
 000020 0AFD                                                      SVC   253    
 000022 D202C08CC0A7                                              MVC   AREA4,=CL3'ABC'
-000028 F050C06E0003                                              SRP   FIELD1(6),3,0                        this is a comment - MUST START in col 51 or greater
+000028 F050C06E0003                                              SRP   FIELD1(6),3,0                 /* this is a comment - MUST START with slash-asterisk
 00002E D201C084C07F                                              MVC   AREA2+1(2),AREA1
 000034 4170C06C                                                  LA    R7,PACK+1
 000038 FA41C06F7000                                              AP    FIELD1+1(5),0(2,R7)
 00003E F3A5C074C06E                                              UNPK  DISP,FIELD1
 000044 96F0C07E                                                  OI    DISP+10,X'F0'
-000048                                                           WTO   DISP                                 display result on terminal using WTO "macro"
+000048                                                           WTO   DISP                          /* display result on terminal using WTO "macro"
 000048 4100C074                                        +         LA    0,DISP
 00004C 4110000B                                        +         LA    1,L'DISP
 000050 0AFF                                            +         SVC   255
