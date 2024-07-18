@@ -1,11 +1,11 @@
-000000                                                  * COPYRIGHT 2021 MOSHIX
+000000                                                  * COPYRIGHT 2024 MOSHIX
 000000                                                           PRINT ON,NOGEN
 000000                                                  REPORT   CSECT
-000000 05C0                                                      BALR  R12,0                              SET UP MY                       
-000000                                                           USING *,R12                              BASE REGISTER         
-000000                                                  *        ST    R13,SAVEA+4                        ENSURE SAVE AREA                
-000000                                                  *        LA    R13,SAVEA                          CHAIN BUILT CORRECTLY. 
-000000                                                  *---------------------------------------------------------------------*
+000000 05C0                                                      BALR  R12,0                   /* SET UP MY                       
+000000                                                           USING *,R12                   /* BASE REGISTER         
+000000                                                  *        ST    R13,SAVEA+4             /* ENSURE SAVE AREA                
+000000                                                  *        LA    R13,SAVEA               /* CHAIN BUILT CORRECTLY. 
+000000                                                  *---------------------------------------------------------------*
 000000                                                  * OPEN INPUT FILE
 000002                                                  INOPEN   OPEN  (INDCB,INPUT)
 000002 4100C0B4                                        +INOPEN   LA    0,INDCBN
@@ -29,8 +29,8 @@
 000024 4100C111                                        +         LA    0,PTITLE
 000028 41100079                                        +         LA    1,L'PTITLE
 00002C 0AFF                                            +         SVC   255
-00002C                                                  *---------------------------------------------------------------------*
-00002E                                                  READREC  GET   INDCB,PAYREC                       READ IN EMPLOYEE REC
+00002C                                                  *---------------------------------------------------------------*
+00002E                                                  READREC  GET   INDCB,PAYREC            /* READ IN EMPLOYEE REC
 00002E 4100C0C1                                        +READREC  LA    0,PAYREC
 000032 5810C0B0                                        +         L     1,INDCBS
 000036 0AF7                                            +         SVC   247
@@ -38,7 +38,7 @@
 00003A 5810C0AC                                        +         L     1,INDCBE
 00003E 19F0                                            +         CR    15,0
 000040 0781                                            +         BER   1 
-000040                                                  *---------------------------------------------------------------------*
+000040                                                  *---------------------------------------------------------------*
 000040                                                  * PRINT ALSO ON SCREEN 
 000042                                                           WTO   PAYREC
 000042 4100C0C1                                        +         LA    0,PAYREC
@@ -49,20 +49,20 @@
 000052 D213C195C0CB                                              MVC   PEMPLOYE,EMPLOYEE                                       
 000058 D204C1ACC0E2                                              MVC   PSALARY,SALARY                                          
 000058                                                  *                                                                      
-00005E F223C20FC0E2                                     PACKIT   PACK  ZSALARY,SALARY                     PACK SALARY                     
-000064 FA42C212C20F                                              AP    ZTOTSAL,ZSALARY                    ADD MONTHLY WAGE TO
+00005E F223C20FC0E2                                     PACKIT   PACK  ZSALARY,SALARY          /* PACK SALARY                     
+000064 FA42C212C20F                                              AP    ZTOTSAL,ZSALARY         /* ADD MONTHLY WAGE TO
 000064                                                  *
 000064                                                  * WRITE REPORT OUTPUT LINE
-00006A                                                  WRITEPR  PUT   OUTDCB,OUTAREA                     WRITE TO PRINTER
+00006A                                                  WRITEPR  PUT   OUTDCB,OUTAREA          /* WRITE TO PRINTER
 00006A 4100C18A                                        +WRITEPR  LA    0,OUTAREA
 00006E 41100085                                        +         LA    1,L'OUTAREA
 000072 BF1EC0B8                                        +         ICM   1,14,OUTDCBS
 000076 0AF6                                            +         SVC   246
-000078 47F0C02C                                                  B     READREC                            AND REPEAT TILL FILE
-000078                                                  *---------------------------------------------------------------------*
+000078 47F0C02C                                                  B     READREC                 /* AND REPEAT TILL FILE
+000078                                                  *---------------------------------------------------------------*
 00007C D20AC23CC217                                     INCLOS   MVC   ATOTAL,EDWD                                              
 000082 DE0AC23CC212                                              ED    ATOTAL,ZTOTSAL                                           
-000088                                                           PUT   OUTDCB,TOTALLNE                    PRINT TOTAL LINE
+000088                                                           PUT   OUTDCB,TOTALLNE         /* PRINT TOTAL LINE
 000088 4100C222                                        +         LA    0,TOTALLNE
 00008C 41100085                                        +         LA    1,L'TOTALLNE
 000090 BF1EC0B8                                        +         ICM   1,14,OUTDCBS
@@ -73,7 +73,7 @@
 00009A 41100085                                        +         LA    1,L'TOTALLNE
 00009E 0AFF                                            +         SVC   255
 00009E                                                  *
-0000A0                                                  CLSALL   CLOSE (INDCB)                            WE GET HERE FROM EODAD
+0000A0                                                  CLSALL   CLOSE (INDCB)                 /* WE GET HERE FROM EODAD
 0000A0 5810C0B0                                        +CLSALL   L     1,INDCBS
 0000A4 0AF8                                            +         SVC   248
 0000A6                                                           CLOSE (OUTDCB)
@@ -93,17 +93,16 @@
 0000BA 02010005                                        +OUTDCBS  DC    XL4'02010005'
 0000BE D6E4E3C4C4                                      +OUTDCBN  DC    CL5'OUTDD'
 0000BE                                                  *                          PAYROLL REPORT STRUCTURE                    
-0000C3                                                  PAYREC   DS    0CL80                              HANDLE FOR THE STRU
-0000C3 40404040                                         EMPID    DS    CL4                                EMPLOYEE ID                                 
-0000C7 404040404040                                              DS    CL6                                FILLER TO POSITION10                       
-0000CD 404040404040404040404040404040404040404040       EMPLOYEE DS    CL21                               NAME OF EMPLOYEE                            
-0000E2 4040                                                      DS    CL2                                FILLER TO POSITION34                       
-0000E4 40404040                                         SALARY   DS    CL4                                MONTHLY SALARY                              
-0000E8 4040404040404040404040404040404040404040404040   TOEND    DS    CL43                               80 BYTES SO FAR                             
+0000C3                                                  PAYREC   DS    0CL80                           /* HANDLE FOR THE STRU
+0000C3 40404040                                         EMPID    DS    CL4                             /* EMPLOYEE ID                                 
+0000C7 404040404040                                              DS    CL6                             /* FILLER TO POSITION10                       
+0000CD 404040404040404040404040404040404040404040       EMPLOYEE DS    CL21                            /* NAME OF EMPLOYEE                            
+0000E2 4040                                                      DS    CL2                             /* FILLER TO POSITION34                       
+0000E4 40404040                                         SALARY   DS    CL4                             /* MONTHLY SALARY                              
+0000E8 4040404040404040404040404040404040404040404040   TOEND    DS    CL43                            /* 80 BYTES SO FAR                             
 0000E8                                                  *--------S-T-A-R-T----O-F----O-U-T-P-U-T----S-T-R-U-C-T-U-R-E---------*
 000113                                                  PTITLE   DS    0CL121 
-000113 40D740C140E840D940D640D340D34040D940C540D740D6            DC    CL27' P A Y R O L L  R E P O R T'
-00012E 4040604040C240C940D44040C340D640D940D74B                  DC    CL20'  -  B I M  C O R P.'
+000113 40D740C140E840D940D640D340D34040D940C540D740D6            DC    CL47' P A Y R O L L  R E P O R T  -  B I M  C O R P.'
 000142 4040404040404040404040404040404040404040404040            DC    CL74' '
 000142                                                  *
 00018C                                                  OUTAREA  DS    0CL133
@@ -116,8 +115,8 @@
 0001AE 4040404040                                       PSALARY  DC    CL5' '                                                  
 0001B3 4040404040404040404040404040404040404040404040   OFILLER  DC    CL94' '                                                 
 0001B3                                                  *                                                                      
-000211 00000C                                           ZSALARY  DC    PL3'0'                             INITIALIZE SLARY PAC
-000214 000000000C                                       ZTOTSAL  DC    PL05'0'                            INITIALIZE TOTAL WA
+000211 00000C                                           ZSALARY  DC    PL3'0'                             /* INITIALIZE SLARY PAC
+000214 000000000C                                       ZTOTSAL  DC    PL05'0'                            /* INITIALIZE TOTAL WA
 000219 402020202020206B202020                           EDWD     DC    X'402020202020206B202020'
 000219                                                  *
 000224                                                  TOTALLNE DS    0CL133                                                  

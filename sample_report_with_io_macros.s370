@@ -1,11 +1,11 @@
-* COPYRIGHT 2021 MOSHIX
+* COPYRIGHT 2024 MOSHIX
          PRINT ON,NOGEN
 REPORT   CSECT
-         BALR  R12,0                              SET UP MY                       
-         USING *,R12                              BASE REGISTER         
-*        ST    R13,SAVEA+4                        ENSURE SAVE AREA                
-*        LA    R13,SAVEA                          CHAIN BUILT CORRECTLY. 
-*---------------------------------------------------------------------*
+         BALR  R12,0                   /* SET UP MY                       
+         USING *,R12                   /* BASE REGISTER         
+*        ST    R13,SAVEA+4             /* ENSURE SAVE AREA                
+*        LA    R13,SAVEA               /* CHAIN BUILT CORRECTLY. 
+*---------------------------------------------------------------*
 * OPEN INPUT FILE
 INOPEN   OPEN  (INDCB,INPUT)
 *
@@ -16,9 +16,9 @@ OUOPEN   OPEN  (OUTDCB,OUTPUT)
 WTITLE   PUT   OUTDCB,PTITLE
 * PRINT ALSO ON SCREEN 
          WTO   PTITLE
-*---------------------------------------------------------------------*
-READREC  GET   INDCB,PAYREC                       READ IN EMPLOYEE REC
-*---------------------------------------------------------------------*
+*---------------------------------------------------------------*
+READREC  GET   INDCB,PAYREC            /* READ IN EMPLOYEE REC
+*---------------------------------------------------------------*
 * PRINT ALSO ON SCREEN 
          WTO   PAYREC
 * 
@@ -26,20 +26,20 @@ CPYSTUFF MVC   PEMPID,EMPID
          MVC   PEMPLOYE,EMPLOYEE                                       
          MVC   PSALARY,SALARY                                          
 *                                                                      
-PACKIT   PACK  ZSALARY,SALARY                     PACK SALARY                     
-         AP    ZTOTSAL,ZSALARY                    ADD MONTHLY WAGE TO
+PACKIT   PACK  ZSALARY,SALARY          /* PACK SALARY                     
+         AP    ZTOTSAL,ZSALARY         /* ADD MONTHLY WAGE TO
 *
 * WRITE REPORT OUTPUT LINE
-WRITEPR  PUT   OUTDCB,OUTAREA                     WRITE TO PRINTER
-         B     READREC                            AND REPEAT TILL FILE
-*---------------------------------------------------------------------*
+WRITEPR  PUT   OUTDCB,OUTAREA          /* WRITE TO PRINTER
+         B     READREC                 /* AND REPEAT TILL FILE
+*---------------------------------------------------------------*
 INCLOS   MVC   ATOTAL,EDWD                                              
          ED    ATOTAL,ZTOTSAL                                           
-         PUT   OUTDCB,TOTALLNE                    PRINT TOTAL LINE
+         PUT   OUTDCB,TOTALLNE         /* PRINT TOTAL LINE
 * PRINT TOTAL ALSO ON SCREEN
          WTO   TOTALLNE
 *
-CLSALL   CLOSE (INDCB)                            WE GET HERE FROM EODAD
+CLSALL   CLOSE (INDCB)                 /* WE GET HERE FROM EODAD
          CLOSE (OUTDCB)
 *
          BR    R14
@@ -48,17 +48,16 @@ CLSALL   CLOSE (INDCB)                            WE GET HERE FROM EODAD
 INDCB    DCB   MACRF=GM,DDNAME=INDD,DSORG=PS,EODAD=INCLOS                
 OUTDCB   DCB   MACRF=PM,DDNAME=OUTDD,DSORG=PS                            
 *                          PAYROLL REPORT STRUCTURE                    
-PAYREC   DS    0CL80                              HANDLE FOR THE STRU
-EMPID    DS    CL4                                EMPLOYEE ID                                 
-         DS    CL6                                FILLER TO POSITION10                       
-EMPLOYEE DS    CL21                               NAME OF EMPLOYEE                            
-         DS    CL2                                FILLER TO POSITION34                       
-SALARY   DS    CL4                                MONTHLY SALARY                              
-TOEND    DS    CL43                               80 BYTES SO FAR                             
+PAYREC   DS    0CL80                           /* HANDLE FOR THE STRU
+EMPID    DS    CL4                             /* EMPLOYEE ID                                 
+         DS    CL6                             /* FILLER TO POSITION10                       
+EMPLOYEE DS    CL21                            /* NAME OF EMPLOYEE                            
+         DS    CL2                             /* FILLER TO POSITION34                       
+SALARY   DS    CL4                             /* MONTHLY SALARY                              
+TOEND    DS    CL43                            /* 80 BYTES SO FAR                             
 *--------S-T-A-R-T----O-F----O-U-T-P-U-T----S-T-R-U-C-T-U-R-E---------*
 PTITLE   DS    0CL121 
-         DC    CL27' P A Y R O L L  R E P O R T'
-         DC    CL20'  -  B I M  C O R P.'
+         DC    CL47' P A Y R O L L  R E P O R T  -  B I M  C O R P.'
          DC    CL74' '
 *
 OUTAREA  DS    0CL133
@@ -71,8 +70,8 @@ PDOLLAR  DC    CL1' '
 PSALARY  DC    CL5' '                                                  
 OFILLER  DC    CL94' '                                                 
 *                                                                      
-ZSALARY  DC    PL3'0'                             INITIALIZE SLARY PAC
-ZTOTSAL  DC    PL05'0'                            INITIALIZE TOTAL WA
+ZSALARY  DC    PL3'0'                             /* INITIALIZE SLARY PAC
+ZTOTSAL  DC    PL05'0'                            /* INITIALIZE TOTAL WA
 EDWD     DC    X'402020202020206B202020'
 *
 TOTALLNE DS    0CL133                                                  
