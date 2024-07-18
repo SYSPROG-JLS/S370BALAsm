@@ -250,12 +250,12 @@ ASC2EBC = ['00', '01', '02', '03', '1A', '09', '1A', '7F', '1A', '1A', '1A', '0B
 # Mnemonics and Assembler Directives MUST start in col 10.
 # Operands MUST start in col 16.
 # An asterisk in col 1 denotes a comment line.
-# Optional comments on a source line MUST begin in col 51
-# or beyond.
+# Optional comments on a source line MUST begin with a /*
+# after the Operands.
 #
-# 1     10       16       51
-# Label Mnemonic Operands Comments
-# [0:8] [9:14]   [15:50]  [50:]
+# 1     10       16
+# Label Mnemonic Operands & Optional Comments
+# [0:8] [9:14]   [15:]
 #
 # Constant types currently supported:
 # C, X, B, F, H, D, P, A, Y
@@ -905,7 +905,11 @@ inputfi = open(file_name+'.s370', 'r')
 for line in inputfi:
     k = str(ctr).rjust(4,'0')
     line = line.rstrip('\n')
-    source_code_list.append(k + line)
+    if ' /*' in line:
+        (new_line, _) = line.split( ' /*')
+        source_code_list.append(k + new_line)
+    else:
+        source_code_list.append(k + line)
     original_source_code_dict[k] =  line
     ctr += 1
     
@@ -978,7 +982,7 @@ while True:
                 stmlab = sl[0:8].rstrip(' ')
             else:
                 stmlab = ''
-            dcb_field = sl[15:50].rstrip(' ')[1:-1]
+            dcb_field = sl[15:].rstrip(' ')[1:-1]
             (dcb, type) = dcb_field.split(',')
             st.append(stmlab + (9-len(stmlab))*' ' + 'LA    0,' + dcb + 'N')
             st.append('         L     1,' + dcb + 'S')
@@ -998,7 +1002,7 @@ while True:
                 stmlab = sl[0:8].rstrip(' ')
             else:
                 stmlab = ''
-            dcb = sl[15:50].rstrip(' ')[1:-1]
+            dcb = sl[15:].rstrip(' ')[1:-1]
             st.append(stmlab + (9-len(stmlab))*' ' + 'L     1,' + dcb + 'S')
             st.append('         SVC   248')
             for s in st:
@@ -1016,7 +1020,7 @@ while True:
                 stmlab = sl[0:8].rstrip(' ')
             else:
                 stmlab = ''
-            dcb_field = sl[15:50].rstrip(' ')
+            dcb_field = sl[15:].rstrip(' ')
             (dcb, inrec) = dcb_field.split(',')
             st.append(stmlab + (9-len(stmlab))*' ' + 'LA    0,' + inrec)
             st.append('         L     1,' + dcb + 'S')
@@ -1040,7 +1044,7 @@ while True:
                 stmlab = sl[0:8].rstrip(' ')
             else:
                 stmlab = ''
-            dcb_field = sl[15:50].rstrip(' ')
+            dcb_field = sl[15:].rstrip(' ')
             (dcb, outrec) = dcb_field.split(',')
             st.append(stmlab + (9-len(stmlab))*' ' + 'LA    0,' + outrec)
             st.append("         LA    1,L'" + outrec)
@@ -1061,7 +1065,7 @@ while True:
                 stmlab = sl[0:8].rstrip(' ')
             else:
                 stmlab = ''
-            data_area = sl[15:50].rstrip(' ')
+            data_area = sl[15:].rstrip(' ')
             st.append(stmlab + (9-len(stmlab))*' ' + 'LA    0,' + data_area)
             st.append("         LA    1,L'" + data_area)
             st.append('         SVC   255')
@@ -1109,7 +1113,7 @@ while True:
         continue
         
     #handle literals as operands
-    t = sl[15:50].rstrip(' ')
+    t = sl[15:].rstrip(' ')
     if '=' in t:
         (oper1, lit) = t.split('=')
         got_lit = False
@@ -1135,7 +1139,7 @@ while True:
     mnemonic = sl[9:14].rstrip(' ')
     
     #handle literals as mask values
-    t = sl[15:50].rstrip(' ')
+    t = sl[15:].rstrip(' ')
     if ("X'" in t or "B'" in t) and t.count(',') > 1 and mnemonic != 'DC':
         if "X'" in t:
             start = t.index("X'",0)
@@ -1167,12 +1171,12 @@ while True:
             if sl[15] == '*':
                 symbol_table_dict[sl[0:8].rstrip(' ')] = program_ctr
             else:
-                symbol_table_dict[sl[0:8].rstrip(' ')] = sl[15:50].rstrip(' ')
+                symbol_table_dict[sl[0:8].rstrip(' ')] = sl[15:].rstrip(' ')
                 
         elif mnemonic == 'DC':
             DC_num_bytes_tot = 0                             #handle possible multiple constants on
             const_array_tot = []                             #one DC
-            DC_list = sl[15:50].rstrip(' ').split(',')
+            DC_list = sl[15:].rstrip(' ').split(',')
             for x in DC_list:
                 (DC_num_bytes, const_array) = handle_DC(x)
                 DC_num_bytes_tot = DC_num_bytes_tot + DC_num_bytes
@@ -1185,7 +1189,7 @@ while True:
             program_ctr = program_ctr + DC_num_bytes_tot
             
         elif mnemonic == 'DS':
-            (DS_num_bytes, const_array) = handle_DS(sl[15:50].rstrip(' '))
+            (DS_num_bytes, const_array) = handle_DS(sl[15:].rstrip(' '))
             # an empty const_array list indicates we had a 'DS  0F, 0D, 0CL4', etc
             if const_array:     
                 address_opcode_list.append((program_ctr, ''.join(const_array)))
@@ -1249,7 +1253,7 @@ while True:
     
     if mnemonic in assem_inst_list:
         if mnemonic == 'USING':
-            (scope, reg) = sl[15:50].rstrip(' ').split(',')
+            (scope, reg) = sl[15:].rstrip(' ').split(',')
             if reg[0].isalpha():
                 reg = symbol_table_dict[reg]
             if scope == '*':
@@ -1276,31 +1280,31 @@ while True:
         inst_len = len(machine_format.split(' ')) + 1
         
         if machine_format == 'RR' or machine_format == 'MR':
-            code = handle_RR(sl[15:50].rstrip(' '))
+            code = handle_RR(sl[15:].rstrip(' '))
 
         elif machine_format == 'LL BD DD BD DD':
-            code = handle_LLBDDDBDDD(sl[15:50].rstrip(' '), base_reg)
+            code = handle_LLBDDDBDDD(sl[15:].rstrip(' '), base_reg)
             
         elif machine_format == 'L1L2 BD DD BD DD':
-            code = handle_L1L2BDDDBDDD(sl[15:50].rstrip(' '), base_reg)
+            code = handle_L1L2BDDDBDDD(sl[15:].rstrip(' '), base_reg)
 
         elif machine_format == 'RX BD DD' or machine_format == 'MX BD DD':
-            code = handle_RXBDDD(sl[15:50].rstrip(' '), base_reg)
+            code = handle_RXBDDD(sl[15:].rstrip(' '), base_reg)
             
         elif machine_format == 'RR BD DD' or machine_format == 'RM BD DD':
-            code = handle_RRBDDD(sl[15:50].rstrip(' '), base_reg)
+            code = handle_RRBDDD(sl[15:].rstrip(' '), base_reg)
             
         elif machine_format == 'II BD DD':
-            code = handle_IIBDDD(sl[15:50].rstrip(' '), base_reg)           
+            code = handle_IIBDDD(sl[15:].rstrip(' '), base_reg)           
 
         elif machine_format == 'R0 BD DD':    #only the shift instructions use this one
-            code = handle_R0BDDD(sl[15:50].rstrip(' '))           
+            code = handle_R0BDDD(sl[15:].rstrip(' '))           
             
         elif machine_format == 'II':          #only the SVC instruction use this one
-            code = handle_II(sl[15:50].rstrip(' '))           
+            code = handle_II(sl[15:].rstrip(' '))           
 
         elif machine_format == 'LI BD DD BD DD':
-            code = handle_LIBDDDBDDD(sl[15:50].rstrip(' '), base_reg)
+            code = handle_LIBDDDBDDD(sl[15:].rstrip(' '), base_reg)
             
         (addr, opc) = address_opcode_list[aol_ctr]
         address_opcode_list[aol_ctr] = (addr, opc+code)            
@@ -1340,7 +1344,7 @@ while True:
         blp = '+'
     
     mnemonic = sl[9:14].rstrip(' ')
-    operand = sl[15:50].rstrip(' ')
+    operand = sl[15:].rstrip(' ')
 
     if sl[0] != '*' and (mnemonic in mach_inst_dict.keys() or (mnemonic == 'DC' or mnemonic == 'DS')):
         if (mnemonic == 'DS' and operand[0] == '0'):
@@ -1394,7 +1398,7 @@ for line in work_source_code_list:
     try:
         t = int(line[0:6],16)   #are col 1-6 valid hex digits
         if line[7] in '0123456789ABCDEF' and (' DC ' not in line and ' DS ' not in line):
-                source_code_dict[line[0:6]] = line[65:106].rstrip(' ')
+                source_code_dict[line[0:6]] = line[65:].rstrip(' ')
     except ValueError:
         pass
 
